@@ -30,7 +30,7 @@ volatile int* const hex4_hex5_ptr = (int*)HEX4_HEX5_BASE; //hex4-5 pointer
 #define ADC_DONE_BIT 16      // simulator
 // #define ADC_DONE_BIT 15   // hardware
 #define LED_MASK    0x3FF        // bits 0-9 led bar
-#define ADC_DATA_MASK 0x0FFF     // bits 0-11 led bar
+#define ADC_DATA_MASK 0x0FFF     
 
 volatile int * const jp1_data = (int *)JP1_BASE; 
 volatile int * const jp1_dir = (int *)(JP1_BASE + 0x04);
@@ -41,8 +41,7 @@ volatile int * const adc_ch0 = (int *)(ADC_BASE + 0x00);
 /**GPIO CONFIG**
 * seg7[10]:
 * Lookup table containing the 7-segment encoding patterns for
-* digits 0–9. Each value represents the bit pattern required
-* to illuminate the appropriate segments on a HEX display.
+* digits 0–9.
 *
 * pack4(h3, h2, h1, h0):
 * Combines four 7-segment byte values into a single 32-bit
@@ -88,14 +87,17 @@ int read_adc_value(void)
     return (*adc_ch0) & ADC_DATA_MASK;
 }
 
-/***** Get Number 0-40 from ADC *****/
-int adc_to_number(int adc_value)
-{
-    int number = (adc_value * 41) / 4096;
-    if (number > 40) number = 40;
-    if (number < 0) number = 0;
-    return number;
+/***** Convert POT to range from 0-39 *****/
+int adc_to_number(int adc_value){
+
+    int num = (adc_value * 40) / 4096;
+    if (adc_value == 4095) num = 39;
+    if (num <= 0) return 0;
+    if (num > 40) return 39;
+    return num;
 }
+
+
 
 
 /****************DISPLAY/OUTPUT METHODS*******************/
@@ -111,6 +113,33 @@ void display_number(int number)
 
     *hex0_hex3_ptr = pack4(blank, blank, hex1, hex0);
 }
+
+
+/***** Display and subtract attempts remaining on 7-seg *****/
+volatile int attempts_remaining = 3; // 3 error attempts total
+
+int display_and_decrement_attempts(void)
+{
+    unsigned char blank = 0x00;
+
+    if (attempts_remaining > 0) attempts_remaining--;
+
+    unsigned char hex0 = seg7[attempts_remaining];
+
+    *hex0_hex3_ptr = pack4(blank, blank, blank, hex0);
+
+    if (attempts_remaining > 0)
+        return 1;   // TRUE: attempts remaining
+    else
+        return 0;   // FALSE: lockout
+}
+
+
+
+
+
+
+
 
 
 
