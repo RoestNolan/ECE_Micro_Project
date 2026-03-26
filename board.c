@@ -7,8 +7,7 @@ volatile int* const key_ptr       = (int*)KEY_BASE; //button pointer
 volatile int* const hex0_hex3_ptr = (int*)HEX0_HEX3_BASE; //hex0-3 pointer
 volatile int* const hex4_hex5_ptr = (int*)HEX4_HEX5_BASE; //hex4-5 pointer
 
-volatile int * const jp1_data = (int *)JP1_BASE;
-volatile int * const jp1_dir = (int *)(JP1_BASE + 0x04);
+volatile int * const ledr_ptr = (int *)LEDR_BASE;
 volatile int * const adc_ch0 = (int *)(ADC_BASE + 0x00);
 
 static const int BLANK_HEX_GROUP = 0x00000000;
@@ -38,11 +37,10 @@ int pack2(unsigned char h5, unsigned char h4)
     return ((int)h5 << 8) | (int)h4;
 }
 
-/***** Configure LED bar GPIO direction and clear outputs on startup *****/
+/***** Clear built-in LEDR outputs on startup *****/
 void board_init_gpio(void)
 {
-    *jp1_dir = LED_MASK;
-    *jp1_data = 0;
+    *ledr_ptr = 0;
 }
 
 /***** Clear all six HEX displays *****/

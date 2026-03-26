@@ -38,6 +38,7 @@ typedef struct {
 
     int digit_index;
     int attempts_remaining;
+    int suppress_change_mode_once;
 
     int feedback_counter;
     int lockout_counter;

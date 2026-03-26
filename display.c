@@ -88,36 +88,36 @@ void display_lockout_message(void)
 /***** Turn all LED bar outputs OFF *****/
 void clear_led_bar(void)
 {
-    *jp1_data = 0x000;
+    *ledr_ptr = 0x000;
 }
 
 /***** Turn all LED bar outputs ON to indicate success *****/
 void show_success_led_pattern(void)
 {
-    *jp1_data = 0x3FF;
+    *ledr_ptr = 0x3FF;
 }
 
 /***** Turn on lower LEDs only to indicate incorrect code *****/
 void show_error_led_pattern(void)
 {
-    *jp1_data = 0x00F;
+    *ledr_ptr = 0x00F;
 }
 
 /***** Show alternating mid-range LEDs to indicate change-code mode *****/
 void show_change_mode_led_pattern(void)
 {
-    *jp1_data = 0x0F0;
+    *ledr_ptr = 0x0F0;
 }
 
 /***** Flash full LED bar on and off during timed lockout *****/
 void flash_lockout_led_pattern(void)
 {
     if (lockout_flash_state == 0) {
-        *jp1_data = 0x3FF;
+        *ledr_ptr = 0x3FF;
         lockout_flash_state = 1;
     }
     else {
-        *jp1_data = 0x000;
+        *ledr_ptr = 0x000;
         lockout_flash_state = 0;
     }
 }

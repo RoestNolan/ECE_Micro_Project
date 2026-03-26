@@ -26,15 +26,14 @@ extern volatile int* const hex0_hex3_ptr;
 extern volatile int* const hex4_hex5_ptr;
 
 /**GPIO CONFIG**/
-#define JP1_BASE    0xFF200060 //LED bar base
-#define ADC_BASE    0xFF204000 //potentiometer base
-#define ADC_DONE_BIT 16      // simulator
-// #define ADC_DONE_BIT 15   // hardware
-#define LED_MASK    0x3FF        // bits 0-9 led bar
+#define LEDR_BASE   0xFF200000 // built-in red LED register
+#define ADC_BASE    0xFF204000 // potentiometer base
+    // simulator
+#define ADC_DONE_BIT 15   // hardware
+#define LED_MASK    0x3FF        // bits 0-9 of built-in LEDs
 #define ADC_DATA_MASK 0x0FFF
 
-extern volatile int * const jp1_data;
-extern volatile int * const jp1_dir;
+extern volatile int * const ledr_ptr;
 extern volatile int * const adc_ch0;
 
 /**GPIO CONFIG**
@@ -59,7 +58,7 @@ int pack4(unsigned char h3, unsigned char h2, unsigned char h1, unsigned char h0
 /***** Pack HEX5-HEX4 segment bytes into one 16-bit value *****/
 int pack2(unsigned char h5, unsigned char h4);
 
-/***** Configure JP1 lower 10 bits as output for LED bar *****/
+/***** Initialize built-in LEDR outputs to OFF *****/
 void board_init_gpio(void);
 
 /***** Clear both HEX register groups *****/

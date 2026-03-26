@@ -18,6 +18,7 @@ void lock_init(LockSystem *lock)
 
     lock->digit_index = 0;
     lock->attempts_remaining = MAX_ATTEMPTS;
+    lock->suppress_change_mode_once = 0;
     lock->state = STATE_ENTER_CODE;
     lock->feedback_counter = 0;
     lock->lockout_counter = 0;
@@ -140,11 +141,12 @@ void lock_update(LockSystem *lock)
             else {
                 lock->attempts_remaining = MAX_ATTEMPTS;
 
-                if (read_change_mode_switch()) {
+                if (!lock->suppress_change_mode_once && read_change_mode_switch()) {
                     reset_new_code(lock);
                     lock->state = STATE_CHANGE_CODE;
                 }
                 else {
+                    lock->suppress_change_mode_once = 0;
                     reset_entered_code(lock);
                     clear_led_bar();
                     clear_all_hex();
@@ -197,6 +199,8 @@ void lock_update(LockSystem *lock)
 
         case STATE_SAVE_NEW_CODE:
             save_new_code(lock);
+            reset_entered_code(lock);
+            lock->suppress_change_mode_once = 1;
             enter_success_state(lock);
             break;
 
